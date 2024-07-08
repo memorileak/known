@@ -126,9 +126,9 @@ social_image = "icons/github.svg"
 name = "Posts"
 url = "$BASE_URL"
 
-[[extra.menu]]
-name = "Projects"
-url = "$BASE_URL/projects"
+# [[extra.menu]]
+# name = "Projects"
+# url = "$BASE_URL/projects"
 
 [[extra.menu]]
 name = "Archive"
