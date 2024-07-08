@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.nav-wrapper {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .nav-wrapper {
+    display: flex;
+  }
+}
+
+.open .nav-wrapper {
+  display: flex;
+}
+
