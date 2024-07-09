@@ -124,23 +124,23 @@ social_image = "icons/github.svg"
 # The top menu.
 [[extra.menu]]
 name = "Posts"
-url = "$BASE_URL"
+url = "$BASE_URL/"
 
 # [[extra.menu]]
 # name = "Projects"
-# url = "$BASE_URL/projects"
+# url = "$BASE_URL/projects/"
 
 [[extra.menu]]
 name = "Archive"
-url = "$BASE_URL/archive"
+url = "$BASE_URL/archive/"
 
 [[extra.menu]]
 name = "Tags"
-url = "$BASE_URL/tags"
+url = "$BASE_URL/tags/"
 
 [[extra.menu]]
 name = "About"
-url = "$BASE_URL/about"
+url = "$BASE_URL/about/"
 
 # The page footer options.
 [extra.footer]
