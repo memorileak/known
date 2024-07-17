@@ -45,8 +45,8 @@ So how does Skip List help in searching an element? The answer is that we always
 
 To illustrate this concept, let's find element 6:
 
-- Start at $L_2$, search through: 4. Because 6 > 4 and we reached the end of current layer, go down to $L_1$ with 4 as checkpoint.
-- At $L_1$, skip 4 and skip through every elements before 4, search through: 6. Because 6 = 6, we found it.
+- Start at $L_2$, browse through: 4, null. Because 6 > 4 and we reached the end of current layer, go down to $L_1$ with 4 as checkpoint.
+- At $L_1$, skip 4 and all elements before, browse through: 6. Because 6 = 6, we found it.
 
 ```
 L2: | ============= 4 - - - - - - - - - - - null
@@ -56,9 +56,9 @@ L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
 
 Now, let's find element 3:
 
-- Start at $L_2$, search through: 4. Because 3 < 4, we know that we can't find 3 in this layer, go down to $L_1$ with checkpoint `|` (the beginning).
-- At $L_1$, search through: 2, 4. Because 3 > 2 and 3 < 4, we know that we can't find 3 in this layer, go down to $L_0$ with checkpoint 2.
-- At $L_0$, skip 2 and skip through every elements before 2, search through: 3. Because 3 = 3, we found it.
+- Start at $L_2$, browse through: 4. Because 3 < 4, we know that we can't find 3 in this layer, go down to $L_1$ and search from the beginning.
+- At $L_1$, browse through: 2, 4. Because 3 > 2 and 3 < 4, we know that we can't find 3 in this layer, go down to $L_0$ with checkpoint 2.
+- At $L_0$, skip 2 and all elements before, browse through: 3. Because 3 = 3, we found it.
 
 ```
 L2: | - - - - - - - 4 - - - - - - - - - - - null
@@ -68,10 +68,90 @@ L0: | - 1 - 2 =[3]- 4 - 5 - 6 - 7 - 8 - 9 - null
 
 ## Building a Skip List
 
+Skip List is built from the lowest layer $L_0$ which is a Linked List containing all sorted elements. Then, gradually build up the layers above $L_1$, $L_2$, $L_3$. To build these layers, the way is to go through all elements of the layer below, at each element, flipping a coin to decide whether or not that element will be picked up to the current layer.
+
+Let's illustrate the concept by builing this Skip List:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - - - null
+L1: | - - - 2 - - - 4 - - - 6 - - - 8 - - - null
+L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
+```
+
+Start by building $L_0$, we sort all elements and build a Linked List. This should be straightforward:
+
+```
+L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
+```
+
+Now, to build $L_1$, we loop through all elements in $L_0$. At each element, we flip a coin to decide if that element should be promoted to $L_1$. Let say if it's Head **(H)**, we promote that element, if it's Tail **(T)**, we leave it.
+
+```
+L1: | - - - 2 - - - 4 - - - 6 - - - 8 - - - null
+        T   H   T   H   T   H   T   H   T
+L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
+```
+
+To build $L_2$, we loop through all elements in $L_1$ and also do the coin flips:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - - - null
+            T       H       T       T
+L1: | - - - 2 - - - 4 - - - 6 - - - 8 - - - null
+```
+
+It's easy to see that the content of the Skip List depends on the result of the sequence of coin flips. And because the sequence of coin flip results depends on random probability, people call Skip List a **probabilistic data structure**. Skip List content after each build is not exactly the same but will be different depending on the probability.
+
 ## Insertion
+
+To insert new element into the Skip List, we find the appropriate position in the bottom layer, insert the element in that position, and promote it through upper layers using coin flips.
+
+Let's insert 6 to this Skip List:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - null
+L1: | - - - 2 - - - 4 - - - 7 - - - - - null
+L0: | - 1 - 2 - 3 - 4 - 5 - 7 - 8 - 9 - null
+```
+
+Find the position in $L_0$, using searching procedure described above. Time complexity should be **$O\lparen log~n\rparen$** in average. The position should be between 5 and 7:
+
+```
+L2: | ============= 4 - - - - - - - - - - - null
+L1: | - - - 2 - - - 4 - - - - - 7 - - - - - null
+L0: | - 1 - 2 - 3 - 4 = 5 -[*]- 7 - 8 - 9 - null
+```
+
+Next, insert 6 to that position. This is just a simple Linked List insertion, time complexity of the operation should be **$O\lparen 1\rparen$**:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - - - null
+L1: | - - - 2 - - - 4 - - - - - 7 - - - - - null
+L0: | - 1 - 2 - 3 - 4 - 5 -[6]- 7 - 8 - 9 - null
+```
+
+Finally, promote that new element through upper layers using coin flips, see how far the element could go up:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - - - null
+                            T
+L1: | - - - 2 - - - 4 - - - 6 - 7 - - - - - null
+                            H
+L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
+```
+
+The promotion stops at $L_1$, we have this Skip List as final result:
+
+```
+L2: | - - - - - - - 4 - - - - - - - - - - - null
+L1: | - - - 2 - - - 4 - - - 6 - 7 - - - - - null
+L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
+```
 
 ## Deletion
 
-## Why is it probabilistic?
+To remove an element from the Skip List, we find that element and remove it from every layers. Time complexity should be **$O\lparen log~n\rparen$** in average.
 
-## Price to pay
+## Memory consumption
+
+This data structure consumes about **twice** as much memory as a Linked List with the same number of elements. That's the price to pay for its speed.
