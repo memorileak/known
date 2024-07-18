@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Theme Config Guide"
 date = "2022-10-20"
 description = "The config fo Kita theme."

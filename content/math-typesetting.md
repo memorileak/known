@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Math Typesetting"
 date = "2022-10-20"
 description = "A brief guide to setup KaTeX"
