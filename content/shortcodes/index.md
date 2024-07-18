@@ -1,4 +1,5 @@
 +++
+draft = true
 title = "Shortcodes"
 date = "2022-10-20"
 description = "The Kita theme shortcodes."
