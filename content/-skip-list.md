@@ -78,6 +78,8 @@ L1: | - - - 2 - - - 4 - - - 6 - - - 8 - - - null
 L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
 ```
 
+They recommend the number of layers a Skip List with $n$ elements should have is about $log_2~n$. This Skip List has 9 elements, $log_2~9~\approx~3$, so we should build 3 layers.
+
 Start by building $L_0$, we sort all elements and build a Linked List. This should be straightforward:
 
 ```
@@ -104,7 +106,7 @@ It's easy to see that the content of the Skip List depends on the result of the 
 
 ## Insertion
 
-To insert new element into the Skip List, we find the appropriate position in the bottom layer, insert the element in that position, and promote it through upper layers using coin flips.
+To insert new element into the Skip List, we find the appropriate position in the bottom layer, insert the element in that position, and promote it through upper layers using coin flips. Consider adding a new layer if the number of elements has grown beyond the limit, in this example, when $log_2~n~\approx~4$.
 
 Let's insert 6 to this Skip List:
 
@@ -114,6 +116,8 @@ L1: | - - - 2 - - - 4 - - - 7 - - - - - null
 L0: | - 1 - 2 - 3 - 4 - 5 - 7 - 8 - 9 - null
 ```
 
+No need to add a new layer cause after the insertion, number of elements is 9, which hasn't reached the limit.
+
 Find the position in $L_0$, using searching procedure described above. Time complexity should be **$O\lparen log~n\rparen$** in average. The position should be between 5 and 7:
 
 ```
@@ -121,6 +125,8 @@ L2: | ============= 4 - - - - - - - - - - - null
 L1: | - - - 2 - - - 4 - - - - - 7 - - - - - null
 L0: | - 1 - 2 - 3 - 4 = 5 -[*]- 7 - 8 - 9 - null
 ```
+
+At this step we should record the search path we've gone through until reaching that position. Search path is an array of every checkpoints at every layers we touched. In this example, the search path through $L_2$, $L_1$, $L_0$ should be `[4, 4, 5]`. Search path is consulted later to know which element will be the predecessor of new element at each layer. This help to easily promote the new element.
 
 Next, insert 6 to that position. This is just a simple Linked List insertion, time complexity of the operation should be **$O\lparen 1\rparen$**:
 
@@ -130,7 +136,13 @@ L1: | - - - 2 - - - 4 - - - - - 7 - - - - - null
 L0: | - 1 - 2 - 3 - 4 - 5 -[6]- 7 - 8 - 9 - null
 ```
 
-Finally, promote that new element through upper layers using coin flips, see how far the element could go up:
+By consulting the search path `[4, 4, 5]`, we know that:
+
+- The predecessor of 6 at $L_0$ is 5.
+- The predecessor of 6 at $L_1$ is 4.
+- The predecessor of 6 at $L_2$ is 4.
+
+Now, promote that new element through upper layers using coin flips, see how far the element could go up:
 
 ```
 L2: | - - - - - - - 4 - - - - - - - - - - - null
@@ -150,7 +162,7 @@ L0: | - 1 - 2 - 3 - 4 - 5 - 6 - 7 - 8 - 9 - null
 
 ## Deletion
 
-To remove an element from the Skip List, we find that element and remove it from every layers. Time complexity should be **$O\lparen log~n\rparen$** in average.
+To remove an element from the Skip List, we find that element and remove it from every layers it appears. Consider removing top layer if it becomes empty. Time complexity should be **$O\lparen log~n\rparen$** in average.
 
 ## Memory consumption
 
