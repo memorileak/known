@@ -10,9 +10,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: zola@0.23.4
+      - name: Install Zola v0.23.6
+        run: |
+          curl -sL https://github.com/getzola/zola/releases/download/v0.23.6/zola-v0.23.6-x86_64-unknown-linux-gnu.tar.gz | tar xz
+          sudo mv zola /usr/local/bin/
       - name: Build
         run: zola build
       - uses: reggionick/s3-deploy@v4
