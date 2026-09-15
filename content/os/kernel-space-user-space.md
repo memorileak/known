@@ -11,9 +11,9 @@ tags = ["kernel"]
 # cover.image = "images/cover.png"
 +++
 
-**Kernel space** and **user space** represent two distinct memory areas and execution modes designed to isolate user applications from the core operating system and physical hardware.
-
 ## Understanding Kernel Space and User Space
+
+**Kernel space** and **user space** represent two distinct memory areas and execution modes designed to isolate user applications from the core operating system and physical hardware.
 
 ### 1. What is Kernel Space and User Space?
 
@@ -40,7 +40,11 @@ The CPU tracks and enforces its current execution state using dedicated hardware
    * **Trapping into Kernel Mode**: When a user process requires OS services (via a system call) or when a hardware interrupt/exception occurs, the processor automatically saves the current user context, switches the mode bit to `0` (kernel mode), and jumps to a predefined, guarded handler location in kernel memory. User code cannot jump to arbitrary kernel addresses; it must pass through these strict hardware-enforced gates.
    * **Returning to User Mode**: When the kernel completes the service request or interrupt handler, it issues a return instruction (e.g., `iret` or `sysexit`), which restores the user context and sets the mode bit back to `1`.
 
+---
+
 ## How System Calls Cross the Kernel-User Boundary
+
+In Linux and modern CPU architectures, **trapping into kernel mode** is the hardware-enforced mechanism that allows an unprivileged user-space application to securely request kernel services.
 
 ### 1. How "Trapping into Kernel Mode" Works in Linux
 
